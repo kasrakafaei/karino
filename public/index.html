@@ -1,1 +1,905 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>کارینو</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Tahoma, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #111827, #1e3a8a);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 25px;
+      padding: 25px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.4);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #9ca3af;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: #1f2937;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 15px;
+    }
+
+    .name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .stat {
+      flex: 1;
+      background: #111827;
+      padding: 15px 8px;
+      border-radius: 15px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .stat span {
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    .xp-box {
+      text-align: right;
+      margin-top: 15px;
+    }
+
+    .xp-text {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      font-size: 13px;
+    }
+
+    .xp-bar {
+      width: 100%;
+      height: 12px;
+      background: #111827;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #3b82f6);
+      transition: .3s;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 15px;
+      padding: 16px;
+      margin-top: 10px;
+      font-size: 17px;
+      font-weight: bold;
+      color: white;
+      background: #2563eb;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    button:active {
+      transform: scale(.97);
+    }
+
+    .offline {
+      background: #16a34a;
+    }
+
+    .online {
+      background: #7c3aed;
+    }
+
+    .shop {
+      background: #d97706;
+    }
+
+    .leaderboard {
+      background: #dc2626;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .back {
+      background: #374151;
+    }
+
+    .game-area {
+      height: 330px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 20% 20%, #22c55e 0 3px, transparent 4px),
+        radial-gradient(circle at 70% 60%, #22c55e 0 3px, transparent 4px),
+        #064e3b;
+      border: 2px solid #374151;
+      margin-bottom: 15px;
+    }
+
+    .player,
+    .bot,
+    .coin {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+    }
+
+    .player {
+      background: #3b82f6;
+      left: 30px;
+      top: 30px;
+      box-shadow: 0 0 15px rgba(59,130,246,.7);
+    }
+
+    .bot {
+      background: #ef4444;
+      right: 30px;
+      bottom: 30px;
+      box-shadow: 0 0 15px rgba(239,68,68,.7);
+    }
+
+    .coin {
+      width: 28px;
+      height: 28px;
+      background: #facc15;
+      color: #713f12;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(250,204,21,.8);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      max-width: 260px;
+      margin: auto;
+    }
+
+    .controls button {
+      margin: 0;
+      background: #374151;
+      padding: 14px;
+    }
+
+    .controls .empty {
+      visibility: hidden;
+    }
+
+    .skins {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .skin {
+      height: 65px;
+      border-radius: 15px;
+      border: 3px solid transparent;
+      cursor: pointer;
+    }
+
+    .skin.selected {
+      border-color: white;
+    }
+
+    .leader {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px;
+      background: #111827;
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+
+    .message {
+      margin: 15px 0;
+      color: #facc15;
+      min-height: 25px;
+    }
+
+    .small {
+      color: #9ca3af;
+      font-size: 12px;
+      margin-top: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- منوی اصلی -->
+  <div id="menuScreen" class="screen active">
+
+    <h1>🎮 کارینو</h1>
+    <div class="subtitle">بازی کن، سکه بگیر و قهرمان شو!</div>
+
+    <div class="card">
+
+      <div class="name" id="playerName">
+        بازیکن
+      </div>
+
+      <div class="stats">
+
+        <div class="stat">
+          <b id="coins">0</b>
+          <span>🪙 سکه</span>
+        </div>
+
+        <div class="stat">
+          <b id="level">1</b>
+          <span>⭐ سطح</span>
+        </div>
+
+        <div class="stat">
+          <b id="games">0</b>
+          <span>🎮 بازی</span>
+        </div>
+
+      </div>
+
+      <div class="xp-box">
+
+        <div class="xp-text">
+          <span>تجربه</span>
+          <span id="xpText">0 / 25</span>
+        </div>
+
+        <div class="xp-bar">
+          <div class="xp-fill" id="xpFill"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <button class="offline" onclick="startGame(false)">
+      🟢 بازی آفلاین
+    </button>
+
+    <button class="online" onclick="startGame(true)">
+      🌐 بازی آنلاین
+    </button>
+
+    <button class="shop" onclick="openScreen('shopScreen')">
+      🛒 فروشگاه
+    </button>
+
+    <button class="leaderboard" onclick="openScreen('leaderScreen')">
+      🏆 جدول برترین‌ها
+    </button>
+
+    <div class="small">
+      ساخته شده توسط کسری کفائی
+    </div>
+
+  </div>
+
+
+  <!-- صفحه بازی -->
+
+  <div id="gameScreen" class="screen">
+
+    <h2>🪙 بازی سکه</h2>
+
+    <div class="message" id="gameMessage">
+      سکه‌ها را جمع کن!
+    </div>
+
+    <div class="game-area" id="gameArea">
+
+      <div class="player" id="player">
+        😀
+      </div>
+
+      <div class="bot" id="bot">
+        🤖
+      </div>
+
+      <div class="coin" id="coin">
+        $
+      </div>
+
+    </div>
+
+    <div class="controls">
+
+      <button class="empty"></button>
+
+      <button onclick="movePlayer(0,-1)">
+        ⬆️
+      </button>
+
+      <button class="empty"></button>
+
+      <button onclick="movePlayer(-1,0)">
+        ⬅️
+      </button>
+
+      <button onclick="movePlayer(0,1)">
+        ⬇️
+      </button>
+
+      <button onclick="movePlayer(1,0)">
+        ➡️
+      </button>
+
+    </div>
+
+    <button class="back" onclick="backToMenu()">
+      🔙 بازگشت
+    </button>
+
+  </div>
+
+
+  <!-- فروشگاه -->
+
+  <div id="shopScreen" class="screen">
+
+    <h2>🛒 فروشگاه اسکین</h2>
+
+    <div class="message" id="shopMessage"></div>
+
+    <div class="card">
+
+      <p>اسکین خودت را انتخاب کن</p>
+
+      <div class="skins">
+
+        <div class="skin" style="background:#e74c3c"
+             onclick="buySkin('#e74c3c',0,this)"></div>
+
+        <div class="skin" style="background:#2ecc71"
+             onclick="buySkin('#2ecc71',10,this)"></div>
+
+        <div class="skin" style="background:#f1c40f"
+             onclick="buySkin('#f1c40f',25,this)"></div>
+
+        <div class="skin" style="background:#3498db"
+             onclick="buySkin('#3498db',50,this)"></div>
+
+        <div class="skin" style="background:#9b59b6"
+             onclick="buySkin('#9b59b6',100,this)"></div>
+
+        <div class="skin" style="background:#ffffff"
+             onclick="buySkin('#ffffff',200,this)"></div>
+
+      </div>
+
+    </div>
+
+    <button class="back" onclick="openScreen('menuScreen')">
+      🔙 بازگشت
+    </button>
+
+  </div>
+
+
+  <!-- جدول برترین‌ها -->
+
+  <div id="leaderScreen" class="screen">
+
+    <h2>🏆 جدول برترین‌ها</h2>
+
+    <div id="leaderboardList"></div>
+
+    <button class="back" onclick="openScreen('menuScreen')">
+      🔙 بازگشت
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  // -------------------------
+  // اطلاعات بازیکن
+  // -------------------------
+
+  let state = JSON.parse(
+    localStorage.getItem("karinoState") || "null"
+  );
+
+  if (!state) {
+
+    state = {
+      name: "",
+      coins: 0,
+      level: 1,
+      xp: 0,
+      games: 0,
+      skin: "#e74c3c",
+      ownedSkins: ["#e74c3c"]
+    };
+
+  }
+
+  if (!state.name) {
+
+    let name = prompt(
+      "👤 سلام!\n\nاسمت چیه؟"
+    );
+
+    state.name = name && name.trim()
+      ? name.trim()
+      : "بازیکن";
+
+    save();
+
+  }
+
+
+  // -------------------------
+  // ذخیره
+  // -------------------------
+
+  function save() {
+
+    localStorage.setItem(
+      "karinoState",
+      JSON.stringify(state)
+    );
+
+  }
+
+
+  // -------------------------
+  // تجربه
+  // -------------------------
+
+  function xpNeeded() {
+
+    return 25 + (state.level - 1) * 5;
+
+  }
+
+
+  function addXP(amount) {
+
+    state.xp += amount;
+
+    while (state.xp >= xpNeeded()) {
+
+      state.xp -= xpNeeded();
+      state.level++;
+
+      state.coins += 10;
+
+    }
+
+    save();
+    updateUI();
+
+  }
+
+
+  // -------------------------
+  // رابط کاربری
+  // -------------------------
+
+  function updateUI() {
+
+    document.getElementById("playerName")
+      .textContent = state.name;
+
+    document.getElementById("coins")
+      .textContent = state.coins;
+
+    document.getElementById("level")
+      .textContent = state.level;
+
+    document.getElementById("games")
+      .textContent = state.games;
+
+    const needed = xpNeeded();
+
+    document.getElementById("xpText")
+      .textContent =
+      state.xp + " / " + needed;
+
+    document.getElementById("xpFill")
+      .style.width =
+      Math.min(100, state.xp / needed * 100) + "%";
+
+    document.getElementById("player")
+      .style.background = state.skin;
+
+  }
+
+
+  // -------------------------
+  // تغییر صفحه
+  // -------------------------
+
+  function openScreen(id) {
+
+    document.querySelectorAll(".screen")
+      .forEach(screen => {
+        screen.classList.remove("active");
+      });
+
+    document.getElementById(id)
+      .classList.add("active");
+
+    if (id === "leaderScreen") {
+      showLeaderboard();
+    }
+
+    updateUI();
+
+  }
+
+
+  // -------------------------
+  // بازی
+  // -------------------------
+
+  let onlineGame = false;
+
+  let playerX = 30;
+  let playerY = 30;
+
+  function startGame(online) {
+
+    onlineGame = online;
+
+    playerX = 30;
+    playerY = 30;
+
+    const player =
+      document.getElementById("player");
+
+    player.style.left = playerX + "px";
+    player.style.top = playerY + "px";
+
+    document.getElementById("bot")
+      .style.display =
+      online ? "flex" : "none";
+
+    document.getElementById("gameMessage")
+      .textContent =
+      online
+      ? "🌐 حریف پیدا شد! سکه‌ها را جمع کن!"
+      : "🟢 بازی آفلاین شروع شد!";
+
+    spawnCoin();
+
+    openScreen("gameScreen");
+
+  }
+
+
+  // -------------------------
+  // حرکت بازیکن
+  // -------------------------
+
+  function movePlayer(dx, dy) {
+
+    const area =
+      document.getElementById("gameArea");
+
+    const maxX =
+      area.clientWidth - 45;
+
+    const maxY =
+      area.clientHeight - 45;
+
+    playerX += dx * 20;
+    playerY += dy * 20;
+
+    playerX =
+      Math.max(5, Math.min(maxX, playerX));
+
+    playerY =
+      Math.max(5, Math.min(maxY, playerY));
+
+    const player =
+      document.getElementById("player");
+
+    player.style.left =
+      playerX + "px";
+
+    player.style.top =
+      playerY + "px";
+
+    checkCoin();
+
+  }
+
+
+  // -------------------------
+  // کنترل با کیبورد
+  // -------------------------
+
+  document.addEventListener(
+    "keydown",
+    function(e) {
+
+      if (e.key === "ArrowUp")
+        movePlayer(0,-1);
+
+      if (e.key === "ArrowDown")
+        movePlayer(0,1);
+
+      if (e.key === "ArrowLeft")
+        movePlayer(-1,0);
+
+      if (e.key === "ArrowRight")
+        movePlayer(1,0);
+
+    }
+  );
+
+
+  // -------------------------
+  // سکه
+  // -------------------------
+
+  function spawnCoin() {
+
+    const area =
+      document.getElementById("gameArea");
+
+    const coin =
+      document.getElementById("coin");
+
+    const x =
+      Math.random() *
+      (area.clientWidth - 40);
+
+    const y =
+      Math.random() *
+      (area.clientHeight - 40);
+
+    coin.style.left = x + "px";
+    coin.style.top = y + "px";
+
+  }
+
+
+  function checkCoin() {
+
+    const coin =
+      document.getElementById("coin");
+
+    const cx =
+      parseFloat(coin.style.left);
+
+    const cy =
+      parseFloat(coin.style.top);
+
+    const distance =
+      Math.sqrt(
+        Math.pow(playerX - cx, 2) +
+        Math.pow(playerY - cy, 2)
+      );
+
+    if (distance < 40) {
+
+      state.coins += 5;
+      state.games++;
+
+      addXP(2);
+
+      document.getElementById("gameMessage")
+        .textContent =
+        "🎉 سکه گرفتی! +5 🪙   +2 XP";
+
+      spawnCoin();
+
+      save();
+      updateUI();
+
+    }
+
+  }
+
+
+  // -------------------------
+  // فروشگاه
+  // -------------------------
+
+  function buySkin(color, price, element) {
+
+    const message =
+      document.getElementById("shopMessage");
+
+    if (state.ownedSkins.includes(color)) {
+
+      state.skin = color;
+
+      message.textContent =
+        "✅ اسکین انتخاب شد!";
+
+      save();
+      updateUI();
+      markSelected();
+
+      return;
+
+    }
+
+    if (state.coins < price) {
+
+      message.textContent =
+        "❌ سکه کافی نداری!";
+
+      return;
+
+    }
+
+    state.coins -= price;
+
+    state.ownedSkins.push(color);
+    state.skin = color;
+
+    message.textContent =
+      "🎉 اسکین خریداری شد!";
+
+    save();
+    updateUI();
+    markSelected();
+
+  }
+
+
+  function markSelected() {
+
+    document.querySelectorAll(".skin")
+      .forEach(el =>
+        el.classList.remove("selected")
+      );
+
+  }
+
+
+  // -------------------------
+  // جدول برترین‌ها
+  // -------------------------
+
+  const names = [
+    "علی رضایی",
+    "محمد احمدی",
+    "امیر کریمی",
+    "رضا حسینی",
+    "پارسا محمدی",
+    "آرین کاظمی",
+    "سینا مرادی",
+    "مهدی اکبری"
+  ];
+
+
+  function showLeaderboard() {
+
+    const list =
+      document.getElementById(
+        "leaderboardList"
+      );
+
+    let players =
+      names.map((name, index) => {
+
+        return {
+          name,
+          score:
+            1000 -
+            index * 80 +
+            Math.floor(
+              Math.random() * 100
+            )
+        };
+
+      });
+
+    players.push({
+      name: state.name,
+      score: state.coins
+    });
+
+    players.sort(
+      (a,b) => b.score - a.score
+    );
+
+    list.innerHTML = "";
+
+    players.slice(0,10)
+      .forEach((player,index) => {
+
+        const div =
+          document.createElement("div");
+
+        div.className = "leader";
+
+        div.innerHTML =
+          `<span>${index + 1}. ${player.name}</span>
+           <b>🪙 ${player.score}</b>`;
+
+        list.appendChild(div);
+
+      });
+
+  }
+
+
+  // -------------------------
+  // بازگشت
+  // -------------------------
+
+  function backToMenu() {
+
+    save();
+
+    openScreen("menuScreen");
+
+  }
+
+
+  // شروع
+  updateUI();
+
+</script>
+
+</body>
+  </html>
